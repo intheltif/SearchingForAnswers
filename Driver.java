@@ -1,4 +1,5 @@
 // Imports here
+import java.io.File;
 
 /**
  * Runs our program. Creates a Graph object and calls its go method as well as
@@ -10,14 +11,24 @@
  */
 public class Driver {
 
+    private static final int FIRST = 0;
+    private static final int FAILURE = 1;
+    private static final int SUCCESS = 0;
+
     public static void main(String[] args) {
+        
+        if(args.length != 1) {
+            System.out.println("Usage is: java Driver <graphFile>");
+        }
+
         try {
 
-            Graph graph = new Graph();
+            Graph graph = new Graph(new File(args[FIRST]));
 
-        }catch(IllegalArgumentException iae) {
-            System.err.println("Source and destination vertices " + 
-                "not found in graph");
+
+        }catch(NullPointerException NPE) {
+            System.err.println("File does not exist. Try again!");
+            System.exit(FAILURE);
         } // end try-catch
 
     } // end main method

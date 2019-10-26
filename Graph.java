@@ -1,4 +1,7 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -10,8 +13,6 @@ import java.util.Scanner;
  */
 public class Graph {
 
-    private static final int ADJ_SIZE = 2;
-    
     /** 
      * List of vertices in the graph where the index corresponds to the 
      * vertex number.
@@ -25,34 +26,77 @@ public class Graph {
     private boolean [][] adjMatrix;
 
     public Graph(File graphFile) {
-        
-        // Create two new empty ArrayLists of default capacity of ten elements.
-        this.vertexList = new ArrayList<Vertex>();
-        this.adjList    = new ArrayList<ArrayList<Vertex>>();
-        
+
+
         try {
-            Scanner in = new Scanner(graphFile);
+            // Scanner to read from the file
+            Scanner input = new Scanner(graphFile);
 
-            while(in.hasNextLine()) {
-
-                int from = in.nextInt();
-                int to   = in.nextInt();
-                // TODO Figure out a better way to do this
-                ArrayList<Vertex> pair = new ArrayList<>(ADJ_SIZE);
-                pair.add(0, from);
-                pair.add(1, to);
-
-                this.vertexList.add(new Vertex(from));
-                this.adjList
-
+            int max = 0;
+            int next = input.nextInt();
+            
+            // Find the largest vertex number in the file
+            while(input.hasNext()) {
+                if(max < next) {
+                    max = next;
+                }
+                next = input.nextInt();
             } // end while loop
+            
+            // Create an ArrayList that is the size of the largest vertex id
+            this.vertexList = new ArrayList<Vertex>(max);
+            
+            // Insert the vertices in a sorted order
+            for(int i = 0; i <= max; i++) {
+                this.vertexList.add(i, new Vertex(i));
+            }
+            
+            // Close the scanner
+            input.close();
 
+            // Print the vertexList to stdout
+            System.out.println("\n==========VERTEX LIST==========");
+            printVertexList(this.vertexList);
+            System.out.println("==========VERTEX LIST==========\n");
+
+             
+            // Then build the adjList
+
+            // Create a new scanner so we start at the beginning of the file
+            input = new Scanner(graphFile);
+            // Create outter ArrayList that's size = # vertices
+            this.adjList = new ArrayList(this.vertexList.size());
+            
+            // Create an empty ArrayList at each index in our adjList
+            for(int i = 0; i < adjList.length; i++) {
+                int goesTo = new ArrayList<Vertex>();
+                this.adjList.add(i, goesTo);
+            }
+            
+            // While there is still items to read, add the relationship to
+            // the adjList
+            // TODO Fails to check for nonexistent relationship and index
+            while(input.hasNext()) {
+                this.adjList.get(input.nextInt()).add(input.nextInt());
+            } // end adjList while loop
+            
+            
+
+            
+            input.close();
+
+            // Finally, build the adjMatrix
+            input = new Scanner(graphFile); //TODO Do I need the scanner?
+
+            input.close();
         } catch(FileNotFoundException fnfe) {
-            System.err.println("File not found. Enter an existing file.");
+            System.err.println("File not found. Please enter an existing file.");
             System.exit(1);
         } catch(InputMismatchException ime) {
-            System.err.println("Vertices must be integers. Exiting..."
+            System.err.println("Vertices must be integers. Exiting...");
             System.exit(2);
+        } // end try-catch
+
 
     } // end Graph constructor
     
@@ -75,7 +119,11 @@ public class Graph {
      * @throws IllegalArgumentException if the source and destination vertices
      *         are not found in the graph.
      */
-    public findSourceDest() throws IllegalArgumentException {
+    public int[] findSourceDest() throws IllegalArgumentException {
+
+        int[] sourceDestArr = new int[2];
+
+        return sourceDestArr;
 
     } // end findSourceDest method
 
@@ -86,7 +134,7 @@ public class Graph {
      * @param start The node to begin our BFS search from.
      * @param dest  The vertex we are searching for.
      */
-    public depthFirstSearch(Vertex start, Vertex dest) {
+    public void depthFirstSearch(Vertex start, Vertex dest) {
 
         // Perform BFS
 
@@ -101,6 +149,9 @@ public class Graph {
     public boolean cycleSearch(Vertex start) {
 
         // Do a cycle search
+        //
+        // TODO Change. This is just a placeholder
+        return false;
 
     } // end cycleSearch method
     
@@ -124,5 +175,14 @@ public class Graph {
         // Print information specified in the handout
 
     } // end printGraphStats method
+
+    public void printVertexList(ArrayList<Vertex> list) {
+        
+        for(int i = 0; i < list.size(); i++) {
+            Vertex element = list.get(i);
+            System.out.println("Index " + i + ": " + element.toString());
+        }
+
+    } // end printList method
 
 } // end Graph class

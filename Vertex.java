@@ -79,4 +79,26 @@ public class Vertex {
 
     } // end getId method
 
+    public boolean equals(Object other) {
+        
+        boolean isEqual = false;
+        
+        Vertex otherVertex = (Vertex)other;
+        
+        if(this.id == otherVertex.getId()) {
+            isEqual = true;
+        }
+        
+        return isEqual;
+
+    } // end equals method
+
+    public String toString() {
+
+        String vertexStr = "ID: " + this.id + "\tCOLOR: " + this.color;
+
+        return vertexStr;
+
+    } // end toString method
+
 } // end Vertex class
