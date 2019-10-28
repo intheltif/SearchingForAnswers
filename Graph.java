@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -83,7 +84,8 @@ public class Graph {
             input.close();
 
             // Finally, build the adjMatrix
-            //TODO May need to set it all to false first then change to true
+
+            // primative boolean arrays are set to false by default.
             this.adjMatrix = new boolean[num_vertices][num_vertices];
 
             for(int i=0; i < this.adjList.size(); i++) {
@@ -92,6 +94,8 @@ public class Graph {
                     adjMatrix[i][goesTo.get(j).getId()] = true;
                 }
             }
+
+            printMat(this.adjMatrix);
 
         } catch(FileNotFoundException fnfe) {
             System.err.println("File not found. Please enter an existing file.");
@@ -188,5 +192,11 @@ public class Graph {
         }
 
     } // end printList method
+
+    private void printMat(boolean[][] mat) {
+        for (boolean[] booleans : mat) {
+            System.out.println(Arrays.toString(booleans));
+        }
+    }
 
 } // end Graph class
