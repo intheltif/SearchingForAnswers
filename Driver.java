@@ -25,7 +25,7 @@ public class Driver {
         try {
 
             Graph graph = new Graph(new File(args[FIRST]));
-
+            graph.go();
 
         }catch(NullPointerException NPE) {
             System.err.println("File does not exist. Try again!");

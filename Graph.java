@@ -92,7 +92,7 @@ public class Graph {
                 }
             }
 
-            printMat(this.adjMatrix);
+            //printMat(this.adjMatrix);
 
         } catch(FileNotFoundException fnfe) {
             System.err.println("File not found. Please enter an existing file.");
@@ -116,10 +116,14 @@ public class Graph {
         Vertex destination = sourceDest[1];
 
         //Perform DFS and print it to the screen.
-        Vertex[] dfs = depthFirstSearch(source, destination);
-        System.out.print("[DFS discovered vertices: 0, 3]: ");
-        for(Vertex v : dfs) {
-            System.out.print("Vertex " + v.getId() + " -> ");
+        depthFirstSearch(source, destination);
+        System.out.print("[DFS discovered vertices: " + source.getId() +
+                ", " + destination.getId() + "]: ");
+        for(Vertex v : vertexList) {
+            if(!v.getColor().equals("white")) {
+                System.out.print("Vertex " + v.getId() + " -> ");
+            } else {
+            }
         }
 
         //Perform TC and print
@@ -169,30 +173,32 @@ public class Graph {
      * @param start The node to begin our BFS search from.
      * @param dest  The vertex we are searching for.
      */
-    public Vertex[] depthFirstSearch(Vertex start, Vertex dest) {
+    public void depthFirstSearch(Vertex start, Vertex dest) {
         // Perform BFS
-        Vertex[] dfs = new Vertex[vertexList.size()];
-        int index = 0;
         //Step 1: Create a stack
         Stack<Vertex> stack = new Stack<>();
         //Step 2: Add the start node
         stack.push(start);
         start.setColor("black");
-        //Step 3: While the stack is not empty
+        //Step 3: While the vertex at the top of the stack is not the dest
         while(!stack.isEmpty()) {
+            //Step 4: Look at the top of the stack
             Vertex current = stack.peek();
+            //Step 5: For all the unvisited neighbors of the item at top
             ArrayList<Vertex> adjacent = this.adjList.get(current.getId());
             for(Vertex neighbor : adjacent) {
+                //Step 6: put them on the stack if they haven't been visited
                 if (!neighbor.getColor().equals("grey")) {
+                    System.out.println("I'm here");
                     neighbor.setColor("grey");
                     stack.push(neighbor);
                 } else {
-                    dfs[index] = stack.pop();
-                    index++;
+                    System.out.println("and here");
+                    //Otherwise, add 'em to the path
+                    Vertex finished = stack.pop();
                 }
             }
         }
-        return dfs;
     } // end depthFirstSearch method
     
     /**
