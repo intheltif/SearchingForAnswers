@@ -41,7 +41,7 @@ public class Vertex {
     public Vertex(int id, String color) {
         
         this.id = id;
-        this.color = color;
+        this.color = color.toLowerCase();
 
     } // end Vertex constructor
     

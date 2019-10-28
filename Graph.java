@@ -1,9 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Represents a Graph made of Vertices.
@@ -113,7 +110,22 @@ public class Graph {
      */
     public void go() {
 
-        // do stuff
+        // Get the source and dest vertices.
+        Vertex[] sourceDest = findSourceDest();
+        Vertex source = sourceDest[0];
+        Vertex destination = sourceDest[1];
+
+        //Perform DFS and print it to the screen.
+        Vertex[] dfs = depthFirstSearch(source, destination);
+        System.out.print("[DFS discovered vertices: 0, 3]: ");
+        for(Vertex v : dfs) {
+            System.out.print("Vertex " + v.getId() + " -> ");
+        }
+
+        //Perform TC and print
+
+        //Perform Cycle search and print result
+
 
     } // end go method
     
@@ -121,15 +133,30 @@ public class Graph {
      * Finds the source and destination vertices. On valid input, asks user to
      * enter new vertices.
      *
-     * @param
-     * @return
+     * @return An array containing the valid source and destination vertices.
      *
      * @throws IllegalArgumentException if the source and destination vertices
      *         are not found in the graph.
      */
-    public int[] findSourceDest() throws IllegalArgumentException {
+    public Vertex[] findSourceDest() throws IllegalArgumentException {
 
-        int[] sourceDestArr = new int[2];
+        Vertex[] sourceDestArr = new Vertex[2];
+
+        Scanner input = new Scanner(System.in);
+        System.out.print("Please enter valid source and destination vertices >> ");
+        try {
+            sourceDestArr[0] = this.vertexList.get(input.nextInt());
+            sourceDestArr[1] = this.vertexList.get(input.nextInt());
+        } catch(InputMismatchException ime) {
+            System.err.print("Valid vertices are of type int: " +
+                    ime.getMessage());
+        }
+
+        if( !(this.vertexList.contains(sourceDestArr[0]) ||
+                this.vertexList.contains(sourceDestArr[1])) ) {
+            throw new IllegalArgumentException("Invalid Vertex supplied. " +
+                    "Vertices must exist within Graph.");
+        }
 
         return sourceDestArr;
 
@@ -142,10 +169,30 @@ public class Graph {
      * @param start The node to begin our BFS search from.
      * @param dest  The vertex we are searching for.
      */
-    public void depthFirstSearch(Vertex start, Vertex dest) {
-
+    public Vertex[] depthFirstSearch(Vertex start, Vertex dest) {
         // Perform BFS
-
+        Vertex[] dfs = new Vertex[vertexList.size()];
+        int index = 0;
+        //Step 1: Create a stack
+        Stack<Vertex> stack = new Stack<>();
+        //Step 2: Add the start node
+        stack.push(start);
+        start.setColor("black");
+        //Step 3: While the stack is not empty
+        while(!stack.isEmpty()) {
+            Vertex current = stack.peek();
+            ArrayList<Vertex> adjacent = this.adjList.get(current.getId());
+            for(Vertex neighbor : adjacent) {
+                if (!neighbor.getColor().equals("grey")) {
+                    neighbor.setColor("grey");
+                    stack.push(neighbor);
+                } else {
+                    dfs[index] = stack.pop();
+                    index++;
+                }
+            }
+        }
+        return dfs;
     } // end depthFirstSearch method
     
     /**
@@ -183,6 +230,8 @@ public class Graph {
         // Print information specified in the handout
 
     } // end printGraphStats method
+
+    //TODO Delete the methods below this point
 
     public void printVertexList(ArrayList<Vertex> list) {
         
