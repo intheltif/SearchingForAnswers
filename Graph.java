@@ -44,7 +44,7 @@ public class Graph {
             } // end while loop
             
             // Create an ArrayList that is the size of the largest vertex id
-            this.vertexList = new ArrayList<Vertex>(max);
+            this.vertexList = new ArrayList<>(max);
             
             // Insert the vertices in a sorted order
             for(int i = 0; i <= max; i++) {
@@ -54,39 +54,38 @@ public class Graph {
             // Close the scanner
             input.close();
 
-            // Print the vertexList to stdout
-            System.out.println("\n==========VERTEX LIST==========");
-            printVertexList(this.vertexList);
-            System.out.println("==========VERTEX LIST==========\n");
-
-             
-            // Then build the adjList
+            // ######## Then build the adjList ##########
 
             // Create a new scanner so we start at the beginning of the file
             input = new Scanner(graphFile);
-            // Create outter ArrayList that's size = # vertices
-            this.adjList = new ArrayList(this.vertexList.size());
-            
+            int num_vertices = this.vertexList.size();
+            // Create outter ArrayList size # vertices
+            this.adjList = new ArrayList<>(num_vertices);
+
             // Create an empty ArrayList at each index in our adjList
-            for(int i = 0; i < adjList.size(); i++) {
-                ArrayList goesTo = new ArrayList<Vertex>();
+            for(int i = 0; i < vertexList.size(); i++) {
+                ArrayList<Vertex> goesTo = new ArrayList<>();
                 this.adjList.add(i, goesTo);
+
             }
-            
+
             // While there is still items to read, add the relationship to
             // the adjList
-            // TODO Fails to check for nonexistent relationship and index
+            // TODO Simplify this if possible
             while(input.hasNext()) {
-                this.adjList.get(input.nextInt()).add(vertexList.get(input.nextInt()));
+                int from = input.nextInt();
+                int to = input.nextInt();
+                Vertex toVertex = this.vertexList.get(to);
+                ArrayList<Vertex> addVertexArrList = this.adjList.get(from);
+                addVertexArrList.add(toVertex);
             } // end adjList while loop
-            
-            
 
-            
             input.close();
 
             // Finally, build the adjMatrix
-            input = new Scanner(graphFile); //TODO Do I need the scanner?
+            //input = new Scanner(graphFile); //TODO Do I need the scanner?
+
+            this.adjMatrix = new boolean[num_vertices][num_vertices];
 
             input.close();
         } catch(FileNotFoundException fnfe) {

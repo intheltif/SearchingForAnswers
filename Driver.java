@@ -19,6 +19,7 @@ public class Driver {
         
         if(args.length != 1) {
             System.out.println("Usage is: java Driver <graphFile>");
+            System.exit(FAILURE);
         }
 
         try {
