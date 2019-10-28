@@ -24,7 +24,6 @@ public class Vertex {
      * default color is white (unvisited).
      *
      * @param id The unique integer representing the vertex's id number.
-     * @param color The color/classification of the vertex.
      */
     public Vertex(int id) {
         

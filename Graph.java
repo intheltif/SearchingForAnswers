@@ -68,8 +68,8 @@ public class Graph {
             this.adjList = new ArrayList(this.vertexList.size());
             
             // Create an empty ArrayList at each index in our adjList
-            for(int i = 0; i < adjList.length; i++) {
-                int goesTo = new ArrayList<Vertex>();
+            for(int i = 0; i < adjList.size(); i++) {
+                ArrayList goesTo = new ArrayList<Vertex>();
                 this.adjList.add(i, goesTo);
             }
             
@@ -77,7 +77,7 @@ public class Graph {
             // the adjList
             // TODO Fails to check for nonexistent relationship and index
             while(input.hasNext()) {
-                this.adjList.get(input.nextInt()).add(input.nextInt());
+                this.adjList.get(input.nextInt()).add(vertexList.get(input.nextInt()));
             } // end adjList while loop
             
             

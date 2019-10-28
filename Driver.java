@@ -31,6 +31,8 @@ public class Driver {
             System.exit(FAILURE);
         } // end try-catch
 
+        // If we made it here, no errors
+        System.exit(SUCCESS);
     } // end main method
 
 } // end Driver class
