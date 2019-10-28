@@ -83,11 +83,16 @@ public class Graph {
             input.close();
 
             // Finally, build the adjMatrix
-            //input = new Scanner(graphFile); //TODO Do I need the scanner?
-
+            //TODO May need to set it all to false first then change to true
             this.adjMatrix = new boolean[num_vertices][num_vertices];
 
-            input.close();
+            for(int i=0; i < this.adjList.size(); i++) {
+                ArrayList<Vertex> goesTo = this.adjList.get(i);
+                for(int j=0; j < goesTo.size(); j++) {
+                    adjMatrix[i][goesTo.get(j).getId()] = true;
+                }
+            }
+
         } catch(FileNotFoundException fnfe) {
             System.err.println("File not found. Please enter an existing file.");
             System.exit(1);
