@@ -78,12 +78,16 @@ public class Graph {
                 ArrayList<Vertex> addVertexArrList = this.adjList.get(from);
                 addVertexArrList.add(toVertex);
             } // end adjList while loop
+
+            /*
             int count = 0;
+
             for(ArrayList<Vertex> v : adjList) {
                 System.out.println("========= Vertex " + count + " ==========");
                 printVertexList(v);
                 count++;
             }
+             */
 
             input.close();
 
@@ -117,29 +121,38 @@ public class Graph {
      * Performs the operations described in the handout.
      */
     public void go() {
-        // Get the source and dest vertices.
+        // Get the source and dest vertices
+/*
         Vertex[] sourceDest = findSourceDest();
         Vertex source = sourceDest[0];
         Vertex destination = sourceDest[1];
-
         //Perform DFS and print it to the screen.
         Stack<Vertex> dfs = depthFirstSearch(source, destination);
-        System.out.print("[DFS discovered vertices: " + source.getId() +
+        System.out.print("[DFS path: " + source.getId() +
                 ", " + destination.getId() + "]: ");
-        for(Vertex v : dfs) {
-                System.out.print("Vertex " + v.getId() + " -> ");
+        for(int i = 0; i < dfs.size() - 1; i++) {
+            Vertex v = dfs.remove(i);
+            System.out.print("Vertex " + v.getId() + ", ");
         }
-/*
-        //Perform TC and print
-        transitiveClosure();
-        System.out.println("\n==========NEW TRANSITIVE CLOSURE==========");
-        printMat(this.adjMatrix);
-
+        System.out.println("Vertex " + dfs.pop().getId());
  */
 
 
-        //Perform Cycle search and print result
+        //Perform TC and print
+        // TODO ===THIS DEFINITELY WORKS!!!!!===
+        transitiveClosure();
+        //System.out.println("\n==========NEW TRANSITIVE CLOSURE==========");
+        //printMat(this.adjMatrix);
 
+/*
+        //Perform Cycle search and print result
+        System.out.print("[Cycle]: ");
+        if(cycleSearch(source)) {
+            System.out.println("Cycle detected");
+        } else {
+            System.out.println("No cycle detected");
+        }
+ */
 
     } // end go method
     
@@ -153,24 +166,40 @@ public class Graph {
      *         are not found in the graph.
      */
     public Vertex[] findSourceDest() throws IllegalArgumentException {
-
+        boolean validInput = false;
         Vertex[] sourceDestArr = new Vertex[2];
-
-        Scanner input = new Scanner(System.in);
+        int from = -1;
+        int to = -1;
         System.out.print("Please enter valid source and destination vertices >> ");
+        Scanner input = new Scanner(System.in);
         try {
-            sourceDestArr[0] = this.vertexList.get(input.nextInt());
-            sourceDestArr[1] = this.vertexList.get(input.nextInt());
-        } catch(InputMismatchException ime) {
-            System.err.print("Valid vertices are of type int: " +
-                    ime.getMessage());
+            from = input.nextInt();
+            to = input.nextInt();
+        } catch (InputMismatchException ime) {
+            System.err.println("Vertices must be integers. Try again.");
+            System.exit(1);
+        } catch(NoSuchElementException nsee) {
+            System.err.println("Vertices could not be found. Try again.");
+            System.exit(1);
         }
-
-        if( !(this.vertexList.contains(sourceDestArr[0]) ||
-                this.vertexList.contains(sourceDestArr[1])) ) {
+        input.close();
+        try {
+            sourceDestArr[0] = this.vertexList.get(from);
+            sourceDestArr[1] = this.vertexList.get(to);
+        } catch(ArrayIndexOutOfBoundsException aioobe) {
+            throw new IllegalArgumentException("Invalid vertices supplied. " +
+                    "Vertices must exist within Graph.");
+        } catch(IndexOutOfBoundsException ioobe) {
+            throw new IllegalArgumentException("Invalid vertices supplied. " +
+                    "Vertices must exist within Graph.");
+        }
+        /*
+        if (!(this.vertexList.contains(sourceDestArr[0])) ||
+                !(this.vertexList.contains(sourceDestArr[1]))) {
             throw new IllegalArgumentException("Invalid Vertex supplied. " +
                     "Vertices must exist within Graph.");
         }
+         */
 
         return sourceDestArr;
 
@@ -185,6 +214,9 @@ public class Graph {
      */
     public Stack<Vertex> depthFirstSearch(Vertex start, Vertex dest) {
         // Perform BFS
+        for(Vertex v : vertexList) {
+            v.setColor("white");
+        }
         Stack<Vertex> stack = new Stack<>();
         start.setColor("grey");
         stack.push(start);
@@ -199,7 +231,7 @@ public class Graph {
                 if (neighbor.getColor().equals("white")) {
                     neighbor.setColor("grey");
                     stack.push(neighbor);
-                    adjacent.remove(neighbor);
+                    //adjacent.remove(neighbor);
                     break;
                 } else if(neighbor.getColor().equals("grey")) {
                     Vertex finished = stack.pop();
@@ -218,27 +250,53 @@ public class Graph {
      * @return True if a cycle exists, false if no cycles are present.
      */
     public boolean cycleSearch(Vertex start) {
-
-        // Do a cycle search
-        //
-        // TODO Change. This is just a placeholder
-        return false;
-
+        boolean isCycle = false;
+        // Perform BFS
+        for(Vertex v : vertexList) {
+            v.setColor("white");
+        }
+        Stack<Vertex> stack = new Stack<>();
+        start.setColor("grey");
+        stack.push(start);
+        Vertex current = stack.peek();
+        while(!stack.isEmpty()) {
+            ArrayList<Vertex> adjacent = this.adjList.get(current.getId());
+            if(adjacent.size() == 0) {
+                Vertex next = stack.pop();
+                next.setColor("black");
+            }
+            for(Vertex neighbor : adjacent) {
+                if (neighbor.getColor().equals("white")) {
+                    neighbor.setColor("grey");
+                    stack.push(neighbor);
+                    //adjacent.remove(neighbor);
+                    break;
+                } else if(neighbor.getColor().equals("grey")) {
+                    isCycle = true;
+                    Vertex finished = stack.pop();
+                    finished.setColor("black");
+                }
+            }
+            current = stack.peek();
+        }
+        return isCycle;
     } // end cycleSearch method
     
     /**
-     * Uses Warshall's algorithm to find transitive closure of a graph.
-     *
-     * @param
-     * @return
+     * Uses Warshall's algorithm to find transitive closure of a graph and
+     * prints each newly created edge to the screen.
      */
     public void transitiveClosure() {
         // Perform Warshall's algorithm
+        System.out.println("[TC: New Edges] ");
         for(int i = 0; i < adjMatrix.length; i++) {
             for(int j = 0; j < adjMatrix.length; j++) {
                 if(adjMatrix[j][i]) {
                     for(int k = 0; k < adjMatrix.length; k++) {
                         if(adjMatrix[j][i] && adjMatrix[i][k]) {
+                            if(!adjMatrix[j][k]) {
+                                System.out.printf("%17s %10s\n", j, k);
+                            }
                             adjMatrix[j][k] = true;
                         }
                     }

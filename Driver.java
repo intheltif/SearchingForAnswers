@@ -30,7 +30,11 @@ public class Driver {
         }catch(NullPointerException NPE) {
             System.err.println("File does not exist. Try again!");
             System.exit(FAILURE);
-        } // end try-catch
+        } catch(IllegalArgumentException iae) {
+            System.err.println(iae.getMessage());
+            System.exit(FAILURE);
+        }
+        // end try-catch
 
         // If we made it here, no errors
         System.exit(SUCCESS);
