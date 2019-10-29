@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.SQLOutput;
 import java.util.*;
 
 /**
@@ -77,6 +78,12 @@ public class Graph {
                 ArrayList<Vertex> addVertexArrList = this.adjList.get(from);
                 addVertexArrList.add(toVertex);
             } // end adjList while loop
+            int count = 0;
+            for(ArrayList<Vertex> v : adjList) {
+                System.out.println("========= Vertex " + count + " ==========");
+                printVertexList(v);
+                count++;
+            }
 
             input.close();
 
@@ -92,6 +99,7 @@ public class Graph {
                 }
             }
 
+            //System.out.println("==========OLD ADJMATRIX==========");
             //printMat(this.adjMatrix);
 
         } catch(FileNotFoundException fnfe) {
@@ -109,24 +117,26 @@ public class Graph {
      * Performs the operations described in the handout.
      */
     public void go() {
-
         // Get the source and dest vertices.
         Vertex[] sourceDest = findSourceDest();
         Vertex source = sourceDest[0];
         Vertex destination = sourceDest[1];
 
         //Perform DFS and print it to the screen.
-        depthFirstSearch(source, destination);
+        Stack<Vertex> dfs = depthFirstSearch(source, destination);
         System.out.print("[DFS discovered vertices: " + source.getId() +
                 ", " + destination.getId() + "]: ");
-        for(Vertex v : vertexList) {
-            if(!v.getColor().equals("white")) {
+        for(Vertex v : dfs) {
                 System.out.print("Vertex " + v.getId() + " -> ");
-            } else {
-            }
         }
-
+/*
         //Perform TC and print
+        transitiveClosure();
+        System.out.println("\n==========NEW TRANSITIVE CLOSURE==========");
+        printMat(this.adjMatrix);
+
+ */
+
 
         //Perform Cycle search and print result
 
@@ -173,32 +183,32 @@ public class Graph {
      * @param start The node to begin our BFS search from.
      * @param dest  The vertex we are searching for.
      */
-    public void depthFirstSearch(Vertex start, Vertex dest) {
+    public Stack<Vertex> depthFirstSearch(Vertex start, Vertex dest) {
         // Perform BFS
-        //Step 1: Create a stack
         Stack<Vertex> stack = new Stack<>();
-        //Step 2: Add the start node
+        start.setColor("grey");
         stack.push(start);
-        start.setColor("black");
-        //Step 3: While the vertex at the top of the stack is not the dest
-        while(!stack.isEmpty()) {
-            //Step 4: Look at the top of the stack
-            Vertex current = stack.peek();
-            //Step 5: For all the unvisited neighbors of the item at top
+        Vertex current = stack.peek();
+        while(!stack.isEmpty() && !current.equals(dest)) {
             ArrayList<Vertex> adjacent = this.adjList.get(current.getId());
+            if(adjacent.size() == 0) {
+                Vertex next = stack.pop();
+                next.setColor("black");
+            }
             for(Vertex neighbor : adjacent) {
-                //Step 6: put them on the stack if they haven't been visited
-                if (!neighbor.getColor().equals("grey")) {
-                    System.out.println("I'm here");
+                if (neighbor.getColor().equals("white")) {
                     neighbor.setColor("grey");
                     stack.push(neighbor);
-                } else {
-                    System.out.println("and here");
-                    //Otherwise, add 'em to the path
+                    adjacent.remove(neighbor);
+                    break;
+                } else if(neighbor.getColor().equals("grey")) {
                     Vertex finished = stack.pop();
+                    finished.setColor("black");
                 }
             }
+            current = stack.peek();
         }
+        return stack;
     } // end depthFirstSearch method
     
     /**
@@ -223,8 +233,18 @@ public class Graph {
      * @return
      */
     public void transitiveClosure() {
-
         // Perform Warshall's algorithm
+        for(int i = 0; i < adjMatrix.length; i++) {
+            for(int j = 0; j < adjMatrix.length; j++) {
+                if(adjMatrix[j][i]) {
+                    for(int k = 0; k < adjMatrix.length; k++) {
+                        if(adjMatrix[j][i] && adjMatrix[i][k]) {
+                            adjMatrix[j][k] = true;
+                        }
+                    }
+                }
+            }
+        }
 
     } // end transitiveClosure method
 
