@@ -14,7 +14,7 @@ Please see the following example output of this program:
 ```bash
     > java Driver graph.txt
         
-        Please enter a valid source and destination vertices >> 0 3
+        Please enter valid source and destination vertices >> 0 3
 
         [DFS Discovered Vertices: 0, 3] Vertex 0, Vertex 1, Vertex 2, Vertex 3
 
@@ -24,6 +24,7 @@ Please see the following example output of this program:
                         4   6
                         0   2
                         ...
+                        NOTE: Not all newly created edges shown here
 
         [Cycle]: Cycle detected.
 ```
