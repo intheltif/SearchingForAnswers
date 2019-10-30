@@ -121,27 +121,26 @@ public class Graph {
      */
     public void go() {
         // Get the source and dest vertices
-/*
         Vertex[] sourceDest = findSourceDest();
         Vertex source = sourceDest[0];
         Vertex destination = sourceDest[1];
+
         //Perform DFS and print it to the screen.
-        Stack<Vertex> dfs = depthFirstSearch(source, destination);
+        LinkedList<Vertex> dfs = depthFirstSearch(source, destination);
+        System.out.println("STACK: " + dfs.toString());
         System.out.print("[DFS path: " + source.getId() +
                 ", " + destination.getId() + "]: ");
-        for(int i = 0; i < dfs.size() - 1; i++) {
-            Vertex v = dfs.remove(i);
-            System.out.print("Vertex " + v.getId() + ", ");
+        int dfs_size = dfs.size() - 1;
+        for(int i=dfs_size; i > 1; i--) {
+            System.out.print("Vertex " + dfs.remove(i).getId());
+            System.out.print(" -> ");
         }
-        System.out.println("Vertex " + dfs.pop().getId());
- */
+        System.out.println("Vertex " + dfs.remove(0).getId());
+        System.out.println();
 
 
         //Perform TC and print
-        // TODO ===THIS DEFINITELY WORKS!!!!!===
-        transitiveClosure();
-        //System.out.println("\n==========NEW TRANSITIVE CLOSURE==========");
-        //printMat(this.adjMatrix);
+        //transitiveClosure();
 
 /*
         //Perform Cycle search and print result
@@ -177,28 +176,16 @@ public class Graph {
         } catch (InputMismatchException ime) {
             System.err.println("Vertices must be integers. Try again.");
             System.exit(1);
-        } catch(NoSuchElementException nsee) {
-            System.err.println("Vertices could not be found. Try again.");
-            System.exit(1);
         }
         input.close();
+
         try {
             sourceDestArr[0] = this.vertexList.get(from);
             sourceDestArr[1] = this.vertexList.get(to);
-        } catch(ArrayIndexOutOfBoundsException aioobe) {
+        } catch(IndexOutOfBoundsException aioobe) {
             throw new IllegalArgumentException("Invalid vertices supplied. " +
                     "Vertices must exist within Graph.");
-        } catch(IndexOutOfBoundsException ioobe) {
-            throw new IllegalArgumentException("Invalid vertices supplied. " +
-                    "Vertices must exist within Graph.");
-        }
-        /*
-        if (!(this.vertexList.contains(sourceDestArr[0])) ||
-                !(this.vertexList.contains(sourceDestArr[1]))) {
-            throw new IllegalArgumentException("Invalid Vertex supplied. " +
-                    "Vertices must exist within Graph.");
-        }
-         */
+        } // end try-catch
 
         return sourceDestArr;
 
@@ -211,16 +198,20 @@ public class Graph {
      * @param start The node to begin our BFS search from.
      * @param dest  The vertex we are searching for.
      */
-    public Stack<Vertex> depthFirstSearch(Vertex start, Vertex dest) {
+    public LinkedList<Vertex> depthFirstSearch(Vertex start, Vertex dest) {
         // Perform BFS
         for(Vertex v : vertexList) {
             v.setColor("white");
         }
-        Stack<Vertex> stack = new Stack<>();
+        LinkedList<Vertex> stack = new LinkedList<Vertex>();
         start.setColor("grey");
         stack.push(start);
         Vertex current = stack.peek();
+        System.out.print("[DFS Discovered Vertices: " + start.getId() + ", " +
+                dest.getId() + "] ");
+        System.out.print("Vertex " + current.getId());
         while(!stack.isEmpty() && !current.equals(dest)) {
+            System.out.print(", ");
             ArrayList<Vertex> adjacent = this.adjList.get(current.getId());
             if(adjacent.size() == 0) {
                 Vertex next = stack.pop();
@@ -238,7 +229,10 @@ public class Graph {
                 }
             }
             current = stack.peek();
+            System.out.print("Vertex " + current.getId());
         }
+        stack.push(current);
+        System.out.println();
         return stack;
     } // end depthFirstSearch method
     
