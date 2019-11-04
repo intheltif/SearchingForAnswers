@@ -78,7 +78,6 @@ public class Graph {
                 addVertexArrList.add(toVertex);
             } // end adjList while loop
 
-            /*
             int count = 0;
 
             for(ArrayList<Vertex> v : adjList) {
@@ -86,7 +85,6 @@ public class Graph {
                 printVertexList(v);
                 count++;
             }
-             */
 
             input.close();
 
@@ -127,7 +125,7 @@ public class Graph {
 
         //Perform DFS and print it to the screen.
         LinkedList<Vertex> dfs = depthFirstSearch(source, destination);
-        System.out.println("STACK: " + dfs.toString());
+        //System.out.println("STACK: " + dfs.toString());
         System.out.print("[DFS path: " + source.getId() +
                 ", " + destination.getId() + "]: ");
         int dfs_size = dfs.size() - 1;
@@ -137,7 +135,6 @@ public class Graph {
         }
         System.out.println("Vertex " + dfs.remove(0).getId());
         System.out.println();
-
 
         //Perform TC and print
         //transitiveClosure();
@@ -203,7 +200,7 @@ public class Graph {
         for(Vertex v : vertexList) {
             v.setColor("white");
         }
-        LinkedList<Vertex> stack = new LinkedList<Vertex>();
+        LinkedList<Vertex> stack = new LinkedList<>();
         start.setColor("grey");
         stack.push(start);
         Vertex current = stack.peek();
@@ -213,6 +210,7 @@ public class Graph {
         while(!stack.isEmpty() && !current.equals(dest)) {
             System.out.print(", ");
             ArrayList<Vertex> adjacent = this.adjList.get(current.getId());
+            //System.out.println("Adjacent: " + adjacent.toString());
             if(adjacent.size() == 0) {
                 Vertex next = stack.pop();
                 next.setColor("black");
@@ -226,6 +224,8 @@ public class Graph {
                 } else if(neighbor.getColor().equals("grey")) {
                     Vertex finished = stack.pop();
                     finished.setColor("black");
+                } else if(neighbor.getColor().equals("black")) {
+                    stack.pop();
                 }
             }
             current = stack.peek();
@@ -259,6 +259,8 @@ public class Graph {
                 next.setColor("black");
             }
             for(Vertex neighbor : adjacent) {
+                //TODO Dr. K said to make this it's own method
+                // If neighbor has unvisited neighbors
                 if (neighbor.getColor().equals("white")) {
                     neighbor.setColor("grey");
                     stack.push(neighbor);
