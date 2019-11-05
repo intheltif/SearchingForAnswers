@@ -31,4 +31,4 @@ Please see the following example output of this program:
 
 ## Known Issues
 
-There are no known issues at this time.
+When the DFS path is printed, it sometimes misses the first element.
