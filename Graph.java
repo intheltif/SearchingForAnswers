@@ -69,7 +69,6 @@ public class Graph {
 
             // While there is still items to read, add the relationship to
             // the adjList
-            // TODO Simplify this if possible
             while(input.hasNext()) {
                 int from = input.nextInt();
                 int to = input.nextInt();
@@ -77,14 +76,6 @@ public class Graph {
                 ArrayList<Vertex> addVertexArrList = this.adjList.get(from);
                 addVertexArrList.add(toVertex);
             } // end adjList while loop
-
-            int count = 0;
-
-            for(ArrayList<Vertex> v : adjList) {
-                System.out.println("========= Vertex " + count + " ==========");
-                printVertexList(v);
-                count++;
-            }
 
             input.close();
 
@@ -99,10 +90,6 @@ public class Graph {
                     adjMatrix[i][goesTo.get(j).getId()] = true;
                 }
             }
-
-            //System.out.println("==========OLD ADJMATRIX==========");
-            //printMat(this.adjMatrix);
-
         } catch(FileNotFoundException fnfe) {
             System.err.println("File not found. Please enter an existing file.");
             System.exit(1);
@@ -137,17 +124,15 @@ public class Graph {
         System.out.println();
 
         //Perform TC and print
-        //transitiveClosure();
+        transitiveClosure();
 
-/*
         //Perform Cycle search and print result
         System.out.print("[Cycle]: ");
         if(cycleSearch(source)) {
-            System.out.println("Cycle detected");
+            System.out.printf("%19s\n", "Cycle detected");
         } else {
-            System.out.println("No cycle detected");
+            System.out.printf("%19s\n", "No cycle detected");
         }
- */
 
     } // end go method
     
@@ -248,7 +233,7 @@ public class Graph {
         for(Vertex v : vertexList) {
             v.setColor("white");
         }
-        Stack<Vertex> stack = new Stack<>();
+        LinkedList<Vertex> stack = new LinkedList<>();
         start.setColor("grey");
         stack.push(start);
         Vertex current = stack.peek();
@@ -259,17 +244,16 @@ public class Graph {
                 next.setColor("black");
             }
             for(Vertex neighbor : adjacent) {
-                //TODO Dr. K said to make this it's own method
-                // If neighbor has unvisited neighbors
                 if (neighbor.getColor().equals("white")) {
                     neighbor.setColor("grey");
                     stack.push(neighbor);
-                    //adjacent.remove(neighbor);
                     break;
                 } else if(neighbor.getColor().equals("grey")) {
-                    isCycle = true;
                     Vertex finished = stack.pop();
                     finished.setColor("black");
+                    isCycle = true;
+                } else if(neighbor.getColor().equals("black")) {
+                    stack.pop();
                 }
             }
             current = stack.peek();
